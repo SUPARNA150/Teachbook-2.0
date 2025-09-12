@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using Teachbook.Web.Repositories;
 
 namespace Teachbook.Web.Controllers
 {
@@ -7,6 +9,8 @@ namespace Teachbook.Web.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
+        private readonly IImageRepository imageRepository;
+
         //for testing - localhost url/api/images
         /*[HttpGet]
         public IActionResult Index()
@@ -14,11 +18,22 @@ namespace Teachbook.Web.Controllers
             return Ok("testing api");
         }*/
 
+        public ImagesController(IImageRepository imageRepository)
+        {
+            this.imageRepository = imageRepository;
+        }
+
         [HttpPost]
         public async Task<IActionResult> UploadAsync(IFormFile file)
         {
             //call a repository
+            var imageURL = await imageRepository.UploadAsync(file);
 
+            if(imageURL == null)
+            {
+                return Problem("Something went wrong!", null, (int)HttpStatusCode.InternalServerError);
+            }
+            return new JsonResult(new { link = imageURL });
         }
     }
 }
