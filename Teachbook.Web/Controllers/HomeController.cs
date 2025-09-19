@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Teachbook.Web.Models;
@@ -46,5 +47,18 @@ namespace Teachbook.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+        //Thos code is for getting the hashcode of the password
+        /*
+        [HttpGet("generate-hash")]
+        public IActionResult GenerateHash()
+        {
+            var user = new IdentityUser { UserName = "superadmin@teachbook.com" };
+            var hasher = new PasswordHasher<IdentityUser>();
+            var hash = hasher.HashPassword(user, "Superadmin@123");
+
+            return Content(hash); // returns plain text
+        }*/
     }
 }
