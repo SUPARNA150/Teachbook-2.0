@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Teachbook.Web.Data;
 using Teachbook.Web.Models.Domain;
@@ -7,6 +8,7 @@ using Teachbook.Web.Repositories;
 
 namespace Teachbook.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminTagsController : Controller
     {
         private readonly ITagRepository tagRepository;
