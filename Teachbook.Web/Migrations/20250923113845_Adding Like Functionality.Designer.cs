@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Teachbook.Web.Data;
 
@@ -11,9 +12,11 @@ using Teachbook.Web.Data;
 namespace Teachbook.Web.Migrations
 {
     [DbContext(typeof(BloggieDbContext))]
-    partial class BloggieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250923113845_Adding Like Functionality")]
+    partial class AddingLikeFunctionality
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,32 +85,6 @@ namespace Teachbook.Web.Migrations
                     b.ToTable("BlogPosts");
                 });
 
-            modelBuilder.Entity("Teachbook.Web.Models.Domain.BlogPostComment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BlogPostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DateAdded")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BlogPostId");
-
-                    b.ToTable("BlogPostComment");
-                });
-
             modelBuilder.Entity("Teachbook.Web.Models.Domain.BlogPostLike", b =>
                 {
                     b.Property<Guid>("Id")
@@ -161,15 +138,6 @@ namespace Teachbook.Web.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Teachbook.Web.Models.Domain.BlogPostComment", b =>
-                {
-                    b.HasOne("Teachbook.Web.Models.Domain.BlogPost", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("BlogPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Teachbook.Web.Models.Domain.BlogPostLike", b =>
                 {
                     b.HasOne("Teachbook.Web.Models.Domain.BlogPost", null)
@@ -181,8 +149,6 @@ namespace Teachbook.Web.Migrations
 
             modelBuilder.Entity("Teachbook.Web.Models.Domain.BlogPost", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
