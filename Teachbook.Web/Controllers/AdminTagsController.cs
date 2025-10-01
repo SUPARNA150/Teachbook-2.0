@@ -40,6 +40,12 @@ namespace Teachbook.Web.Controllers
 
         public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
+            ValidateAddTagRequest(addTagRequest);
+
+            if (ModelState.IsValid == false)
+            {
+                return View();
+            }
             //var Name = addTagRequest.Name;
             //var DisplayName = addTagRequest.DisplayName;
 
@@ -125,6 +131,17 @@ namespace Teachbook.Web.Controllers
             }
             //show error notification
             return RedirectToAction("Edit", new { id = editTagRequest.Id });
+        }
+
+        private void ValidateAddTagRequest(AddTagRequest request)
+        {
+            if (request.Name != null && request.DisplayName != null)
+            {
+                if (request.Name == request.DisplayName)
+                {
+                    ModelState.AddModelError("DisplayName", "Name cannot be the same as DisplayName");
+                }
+            }
         }
     }
 }
