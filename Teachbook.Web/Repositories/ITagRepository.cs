@@ -5,7 +5,9 @@ namespace Teachbook.Web.Repositories
     public interface ITagRepository
     {
         Task<IEnumerable<Tag>> GetAllAsync(
-            string? searchQuery = null);
+            string? searchQuery = null,
+            string? sortBy = null,
+            string? sortDirection = null);
         Task<Tag?> GetAsync(Guid id);
         Task<Tag> AddAsync(Tag tag);
         Task<Tag?> UpdateAsync(Tag tag);

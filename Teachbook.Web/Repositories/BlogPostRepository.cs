@@ -33,7 +33,10 @@ namespace Teachbook.Web.Repositories
             return null;
         }
 
-        public async Task<IEnumerable<BlogPost>> GetAllAsync(string? searchQuery)
+        public async Task<IEnumerable<BlogPost>> GetAllAsync(
+            string? searchQuery,
+            string? sortBy,
+            string? sortDirection)
         {
             var query = bloggieDbContext.BlogPosts.AsQueryable();
 
@@ -43,6 +46,24 @@ namespace Teachbook.Web.Repositories
                 query = query.Where(x => x.Heading.Contains(searchQuery) ||
                                          x.Tags.Any(t => t.Name.Contains(searchQuery)));
             }
+
+
+            // Sorting
+            if (string.IsNullOrWhiteSpace(sortBy) == false)
+            {
+                var isDesc = string.Equals(sortDirection, "Desc", StringComparison.OrdinalIgnoreCase);
+
+                if (string.Equals(sortBy, "Heading", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = isDesc ? query.OrderByDescending(x => x.Heading) : query.OrderBy(x => x.Heading);
+                }
+                if (string.Equals(sortBy, "Tags", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = isDesc ? query.OrderByDescending(x => x.Tags.OrderBy(t => t.Name).Select(t => t.Name).FirstOrDefault())
+                                   : query.OrderBy(x => x.Tags.OrderBy(t => t.Name).Select(t => t.Name).FirstOrDefault());
+                }
+            }
+
             return await query.Include(x => x.Tags).ToListAsync();
 
             //return await bloggieDbContext.BlogPosts.Include(x => x.Tags).ToListAsync();

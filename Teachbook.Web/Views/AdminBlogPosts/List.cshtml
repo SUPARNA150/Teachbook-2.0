@@ -32,8 +32,56 @@
             <thead>
                 <tr>
                     <td>Id</td>
-                    <td>Heading</td>
-                    <td>Tags</td>
+                    <td>
+                        Heading
+                        <span>
+                            <span>
+                                <a class="btn btn-light"
+                                   asp-controller="AdminBlogPosts"
+                                   asp-action="List"
+                                   asp-route-sortBy="Heading"
+                                   asp-route-sortDirection="Asc"
+                                   asp-route-searchQuery="@ViewBag.SearchQuery">
+                                    <i class="bi bi-arrow-up"></i>
+                                </a>
+                            </span>
+                            <span>
+                                <a class="btn btn-light"
+                                   asp-controller="AdminBlogPosts"
+                                   asp-action="List"
+                                   asp-route-sortBy="Heading"
+                                   asp-route-sortDirection="Desc"
+                                   asp-route-searchQuery="@ViewBag.SearchQuery">
+                                    <i class="bi bi-arrow-down"></i>
+                                </a>
+                            </span>
+                        </span>
+                        </td>
+                    <td>
+                        Tags
+                        <span>
+                            <span>
+                                <a class="btn btn-light"
+                                   asp-controller="AdminBlogPosts"
+                                   asp-action="List"
+                                   asp-route-sortBy="Tags"
+                                   asp-route-sortDirection="Asc"
+                                   asp-route-searchQuery="@ViewBag.SearchQuery">
+                                    <i class="bi bi-arrow-up"></i>
+                                </a>
+                            </span>
+                            <span>
+                                <a class="btn btn-light"
+                                   asp-controller="AdminBlogPosts"
+                                   asp-action="List"
+                                   asp-route-sortBy="Tags"
+                                   asp-route-sortDirection="Desc"
+                                   asp-route-searchQuery="@ViewBag.SearchQuery">
+                                    <i class="bi bi-arrow-down"></i>
+                                </a>
+                            </span>
+                        </span>
+                        </td>
                     <td> </td>
                 </tr>
             </thead>

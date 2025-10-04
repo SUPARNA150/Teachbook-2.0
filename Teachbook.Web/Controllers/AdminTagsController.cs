@@ -67,12 +67,17 @@ namespace Teachbook.Web.Controllers
 
         [HttpGet]
         [ActionName("List")]
-        public async Task<IActionResult> List(string? searchQuery)
+        public async Task<IActionResult> List(
+            string? searchQuery, 
+            string? sortBy, 
+            string? sortDirection)
         {
             ViewBag.SearchQuery = searchQuery;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortDirection = sortDirection;
 
             //use dbcontext to read the tags
-            var tags = await tagRepository.GetAllAsync(searchQuery);
+            var tags = await tagRepository.GetAllAsync(searchQuery, sortBy, sortDirection);
 
             return View(tags);
         }
