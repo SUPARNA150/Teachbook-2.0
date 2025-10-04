@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using Teachbook.Web.Data;
 using Teachbook.Web.Models.Domain;
 
@@ -32,9 +33,19 @@ namespace Teachbook.Web.Repositories
             return null;
         }
 
-        public async Task<IEnumerable<BlogPost>> GetAllAsync()
+        public async Task<IEnumerable<BlogPost>> GetAllAsync(string? searchQuery)
         {
-            return await bloggieDbContext.BlogPosts.Include(x => x.Tags).ToListAsync();
+            var query = bloggieDbContext.BlogPosts.AsQueryable();
+
+            // Filtering
+            if (string.IsNullOrWhiteSpace(searchQuery) == false)
+            {
+                query = query.Where(x => x.Heading.Contains(searchQuery) ||
+                                         x.Tags.Any(t => t.Name.Contains(searchQuery)));
+            }
+            return await query.Include(x => x.Tags).ToListAsync();
+
+            //return await bloggieDbContext.BlogPosts.Include(x => x.Tags).ToListAsync();
         }
 
         public async Task<BlogPost?> GetAsync(Guid id)

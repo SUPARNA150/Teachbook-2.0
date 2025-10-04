@@ -70,10 +70,12 @@ namespace Teachbook.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string? searchQuery)
         {
+            ViewBag.SearchQuery = searchQuery;
+
             // Call the repository 
-            var blogPosts = await blogPostRepository.GetAllAsync();
+            var blogPosts = await blogPostRepository.GetAllAsync(searchQuery);
 
             return View(blogPosts);
         }

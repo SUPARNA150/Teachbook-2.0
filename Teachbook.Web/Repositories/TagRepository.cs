@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Teachbook.Web.Data;
 using Teachbook.Web.Models.Domain;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Teachbook.Web.Repositories
 {
@@ -34,9 +35,19 @@ namespace Teachbook.Web.Repositories
             return null;
         }
 
-        public async Task<IEnumerable<Tag>> GetAllAsync()
+        public async Task<IEnumerable<Tag>> GetAllAsync(string? searchQuery)
         {
-            return await bloggieDbContext.Tags.ToListAsync();
+            var query = bloggieDbContext.Tags.AsQueryable();
+
+            // Filtering
+            if (string.IsNullOrWhiteSpace(searchQuery) == false)
+            {
+                query = query.Where(x => x.Name.Contains(searchQuery) ||
+                                         x.DisplayName.Contains(searchQuery));
+            }
+            return await query.ToListAsync();
+
+            //return await bloggieDbContext.Tags.ToListAsync();
         }
 
         public Task<Tag?> GetAsync(Guid id)
