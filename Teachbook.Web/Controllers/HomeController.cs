@@ -37,7 +37,13 @@ namespace Teachbook.Web.Controllers
             return View(model);
         }
 
-        public IActionResult Privacy()
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        public IActionResult About()
         {
             return View();
         }
