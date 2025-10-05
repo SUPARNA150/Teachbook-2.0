@@ -73,14 +73,33 @@ namespace Teachbook.Web.Controllers
         public async Task<IActionResult> List(
             string? searchQuery,
             string? sortBy,
-            string? sortDirection)
+            string? sortDirection,
+            int pageSize = 4,
+            int pageNumber = 1)
         {
+            var totalRecords = await blogPostRepository.CountAsync();
+            var totalPages = Math.Ceiling((decimal)totalRecords / pageSize);
+
+            if (pageNumber > totalPages)
+            {
+                pageNumber--;
+            }
+
+            if (pageNumber < 1)
+            {
+                pageNumber++;
+            }
+
+            ViewBag.TotalPages = totalPages;
             ViewBag.SearchQuery = searchQuery;
             ViewBag.SortBy = sortBy;
             ViewBag.SortDirection = sortDirection;
+            ViewBag.SortDirection = sortDirection;
+            ViewBag.PageSize = pageSize;
+            ViewBag.PageNumber = pageNumber;
 
             // Call the repository 
-            var blogPosts = await blogPostRepository.GetAllAsync(searchQuery, sortBy, sortDirection);
+            var blogPosts = await blogPostRepository.GetAllAsync(searchQuery, sortBy, sortDirection, pageNumber, pageSize);
 
             return View(blogPosts);
         }
