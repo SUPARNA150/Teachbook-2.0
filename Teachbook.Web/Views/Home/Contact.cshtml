@@ -1,4 +1,5 @@
-﻿
+﻿@model Teachbook.Web.Models.ViewModels.ContactViewModel
+
 @{
 }
 
@@ -10,26 +11,34 @@
                 Contact Us
             </h1>
 
+            <!-- Success Message (ViewBag.Message) -->
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success text-center mb-3" role="alert">
+                    @ViewBag.Message
+                </div>
+            }
+
             <form method="post">
                 <!-- Name -->
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input type="text" id="name" class="form-control" placeholder="Enter your name" required />
-                    <span class="text-danger"></span>
+                    <input type="text" id="name" class="form-control" placeholder="Enter your name" id="name" asp-for="Name" required />
+                    <span class="text-danger" asp-validation-for="Name"></span>
                 </div>
 
                 <!-- Email -->
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required />
-                    <span class="text-danger"></span>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" id="email" asp-for="Email" required />
+                    <span class="text-danger" asp-validation-for="Email"></span>
                 </div>
 
                 <!-- Message -->
                 <div class="mb-3">
                     <label for="message" class="form-label">Write Your Message</label>
-                    <textarea id="message" class="form-control" rows="5" placeholder="Type your message here..." required></textarea>
-                    <span class="text-danger"></span>
+                    <textarea id="message" class="form-control" rows="5" placeholder="Type your message here..." id="message" asp-for="Message" required></textarea>
+                    <span class="text-danger" asp-validation-for="Message"></span>
                 </div>
 
                 <!-- Submit Button -->
