@@ -1,4 +1,6 @@
 ﻿@model Teachbook.Web.Models.ViewModels.HomeViewModel
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> signInManager
 
 @{
     ViewData["Title"] = "Home Page";
@@ -72,13 +74,28 @@
 
                             <p class="card-text mb-3 flex-grow-1">@blogPost.ShortDescription</p>
 
-                            <div class="mt-auto text-start">
-                              <a class="btn btn-dark"
-                               asp-area=""
-                               asp-controller="Blogs"
-                               asp-action="Index"
-                               asp-route-urlHandle="@blogPost.UrlHandle">Read More</a>
+                            
+                                <div class="mt-auto text-start">
+                                    @if (signInManager.IsSignedIn(User))
+                                    {
+                                        <a class="btn btn-dark"
+                                        asp-area=""
+                                        asp-controller="Blogs"
+                                        asp-action="Index"
+                                        asp-route-urlHandle="@blogPost.UrlHandle">Read More</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-dark"
+                                           asp-area=""
+                                           asp-controller="Account"
+                                           asp-action="Login"
+                                           asp-route-returnUrl="@Url.Action("Index", "Blogs", new { urlHandle = blogPost.UrlHandle })">
+                                            Read More
+                                        </a>
+                                    }
                             </div>
+                            
                         </div>
                     </div>
                 </div>
