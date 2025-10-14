@@ -77,7 +77,6 @@ namespace Teachbook.Web.Controllers
             return View();
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -94,17 +93,8 @@ namespace Teachbook.Web.Controllers
                 // Get current user's roles
                 var currentUserRoles = await userManager.GetRolesAsync(currentUser);
 
-                // If current user is Admin but the target user is Admin, block the delete
-                if (currentUserRoles.Contains("Admin") && rolesOfTargetUser.Contains("Admin"))
-                {
-                    TempData["ErrorMessage"] = "Admins cannot delete other Admins.";
-                    return RedirectToAction("List", "AdminUsers");
-                }
-
                 // If current user is SuperAdmin, allow deleting anyone
-                // If current user is Admin, allow deleting only normal users
-                if (currentUserRoles.Contains("SuperAdmin") ||
-                    (currentUserRoles.Contains("Admin") && rolesOfTargetUser.Contains("User")))
+                if (currentUserRoles.Contains("SuperAdmin"))
                 {
                     var identityResult = await userManager.DeleteAsync(userToDelete);
 
@@ -115,13 +105,34 @@ namespace Teachbook.Web.Controllers
                     }
                 }
 
+                // If current user is Admin, block deleting other Admins
+                if (currentUserRoles.Contains("Admin"))
+                {
+                    if (rolesOfTargetUser.Contains("Admin"))
+                    {
+                        TempData["ErrorMessage"] = "Admins cannot delete other Admins.";
+                        return RedirectToAction("List", "AdminUsers");
+                    }
+
+                    // Admin can delete normal users
+                    if (rolesOfTargetUser.Contains("User"))
+                    {
+                        var identityResult = await userManager.DeleteAsync(userToDelete);
+
+                        if (identityResult != null && identityResult.Succeeded)
+                        {
+                            TempData["SuccessMessage"] = "User deleted successfully.";
+                            return RedirectToAction("List", "AdminUsers");
+                        }
+                    }
+                }
+
                 TempData["ErrorMessage"] = "You are not authorized to delete this user.";
                 return RedirectToAction("List", "AdminUsers");
             }
 
             return View();
         }
-
-
     }
 }
+    
