@@ -47,7 +47,7 @@
 
 
 <div class="container py-5">
-    <div class="row row-cols-1 row-cols-md-3 g-5">
+    <div class="row row-cols-1 row-cols-md-3 g-5" id="blog-container">
         @if (Model != null && Model.BlogPosts.Any())
         {
             foreach (var blogPost in Model.BlogPosts)
@@ -94,17 +94,39 @@
                                             Read More
                                         </a>
                                     }
-                            </div>
-                            
+                            </div>   
                         </div>
                     </div>
                 </div>
             }
         }
     </div>
+    <!-- Load More Button -->
+    <div class="text-center mt-5">
+        <button id="loadMoreBtn" class="btn btn-outline-dark px-4 py-2">Load More</button>
+    </div>
 </div>
 
 
+@section Scripts {
+    <script>
+        let skip = 6; // First 6 are already loaded
+        const take = 6;
 
-
-
+        document.getElementById("loadMoreBtn").addEventListener("click", function () {
+            fetch(`/Home/LoadMore?skip=${skip}&take=${take}`, {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    if (html.trim() === "") {
+                        document.getElementById("loadMoreBtn").style.display = "none";
+                    } else {
+                        document.getElementById("blog-container").insertAdjacentHTML("beforeend", html);
+                        skip += take; // increase skip for next batch
+                    }
+                })
+                .catch(error => console.error("Error loading more blogs:", error));
+        });
+    </script>
+}

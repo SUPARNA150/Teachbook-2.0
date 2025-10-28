@@ -16,5 +16,7 @@ namespace Teachbook.Web.Repositories
         Task<BlogPost?> UpdateAsync(BlogPost blogPost);
         Task<BlogPost?> DeleteAsync(Guid id);
         Task<int> CountAsync();
+        Task<IEnumerable<BlogPost>> GetPagedAsync(int skip, int take);
+
     }
 }

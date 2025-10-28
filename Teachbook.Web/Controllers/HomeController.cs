@@ -25,10 +25,10 @@ namespace Teachbook.Web.Controllers
             this.bloggieDbContext = bloggieDbContext;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int skip = 0, int take = 6)
         {
             //getting all blogs
-            var blogPosts = await blogPostRepository.GetAllAsync();
+            var blogPosts = await blogPostRepository.GetPagedAsync(skip, take);
 
             //getting all tags
             var tags = await tagRepository.GetAllAsync();
@@ -39,7 +39,29 @@ namespace Teachbook.Web.Controllers
                 Tags = tags
             };
 
+            // If this is an AJAX request, return only the blog cards partial view
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("BlogPostCardsPartial", model.BlogPosts);
+            }
+
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LoadMore(int skip = 0, int take = 6)
+        {
+            // Fetch the next set of blogs
+            var blogPosts = await blogPostRepository.GetPagedAsync(skip, take);
+
+            // If there are no more posts, return an empty string (so JS can stop loading)
+            if (blogPosts == null || !blogPosts.Any())
+            {
+                return Content(string.Empty);
+            }
+
+            // Return only the HTML for the new blog cards
+            return PartialView("BlogPostCardsPartial", blogPosts);
         }
 
         [HttpGet]
@@ -85,7 +107,7 @@ namespace Teachbook.Web.Controllers
         }
 
 
-        //Thos code is for getting the hashcode of the password
+        //This code is for getting the hashcode of the password
         /*
         [HttpGet("generate-hash")]
         public IActionResult GenerateHash()

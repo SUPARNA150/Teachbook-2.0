@@ -125,5 +125,14 @@ namespace Teachbook.Web.Repositories
         {
             return await bloggieDbContext.BlogPosts.CountAsync();
         }
+
+        public async Task<IEnumerable<BlogPost>> GetPagedAsync(int skip, int take)
+        {
+            return await bloggieDbContext.BlogPosts
+                        .Include(x => x.Tags)
+                        .Skip(skip)
+                        .Take(take)
+                        .ToListAsync();
+        }
     }
 }
