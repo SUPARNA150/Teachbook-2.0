@@ -25,18 +25,24 @@ namespace Teachbook.Web.Controllers
             this.bloggieDbContext = bloggieDbContext;
         }
 
-        public async Task<IActionResult> Index(int skip = 0, int take = 6)
+        public async Task<IActionResult> Index(int skip = 0, int take = 3)
         {
-            //getting all blogs
+            //Get total blog count (without pagination)
+            var allBlogs = await blogPostRepository.GetAllAsync();
+            var totalCount = allBlogs.Count();
+
+            //Get paginated blogs
             var blogPosts = await blogPostRepository.GetPagedAsync(skip, take);
 
-            //getting all tags
+            //Get tags
             var tags = await tagRepository.GetAllAsync();
 
+            //Create ViewModel and include total count
             var model = new HomeViewModel
             {
                 BlogPosts = blogPosts,
-                Tags = tags
+                Tags = tags,
+                TotalBlogs = totalCount
             };
 
             // If this is an AJAX request, return only the blog cards partial view
@@ -49,7 +55,7 @@ namespace Teachbook.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> LoadMore(int skip = 0, int take = 6)
+        public async Task<IActionResult> LoadMore(int skip = 0, int take = 3)
         {
             // Fetch the next set of blogs
             var blogPosts = await blogPostRepository.GetPagedAsync(skip, take);

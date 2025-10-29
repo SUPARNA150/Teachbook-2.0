@@ -45,6 +45,8 @@
     </div>
 </div>
 
+<!-- Hidden field to store total blog count -->
+<input type="hidden" id="totalBlogs" value="@Model.TotalBlogs" />
 
 <div class="container py-5">
     <div class="row row-cols-1 row-cols-md-3 g-5" id="blog-container">
@@ -110,8 +112,11 @@
 
 @section Scripts {
     <script>
-        let skip = 6; // First 6 are already loaded
-        const take = 6;
+        let skip = 3; // First 3 are already loaded
+        const take = 3;
+        const totalBlogs = parseInt(document.getElementById("totalBlogs").value);
+        const loadMoreBtn = document.getElementById("loadMoreBtn");
+        const blogContainer = document.getElementById("blog-container");
 
         document.getElementById("loadMoreBtn").addEventListener("click", function () {
             fetch(`/Home/LoadMore?skip=${skip}&take=${take}`, {
@@ -124,6 +129,10 @@
                     } else {
                         document.getElementById("blog-container").insertAdjacentHTML("beforeend", html);
                         skip += take; // increase skip for next batch
+                        // hide button if all blogs are shown
+                        if (skip >= totalBlogs) {
+                              loadMoreBtn.style.display = "none";
+                        }
                     }
                 })
                 .catch(error => console.error("Error loading more blogs:", error));
