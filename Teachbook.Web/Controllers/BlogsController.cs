@@ -41,14 +41,15 @@ namespace Teachbook.Web.Controllers
                 if (signInManager.IsSignedIn(User))
                 {
                     // Get like for this blog for this user
-                    var likesForBlog = await blogPostLikeRepository.GetLikesForBlog(blogPost.Id);
+                    //var likesForBlog = await blogPostLikeRepository.GetLikesForBlog(blogPost.Id);
 
                     var userId = userManager.GetUserId(User);
 
                     if (userId != null)
                     {
-                        var likeFromUser = likesForBlog.FirstOrDefault(x => x.UserId == Guid.Parse(userId));
-                        liked = likeFromUser != null;
+                        liked = await blogPostLikeRepository.HasUserLikedAsync(blogPost.Id, Guid.Parse(userId));
+                        //var likeFromUser = likesForBlog.FirstOrDefault(x => x.UserId == Guid.Parse(userId));
+                        //liked = likeFromUser != null;
                     }
                 }
 

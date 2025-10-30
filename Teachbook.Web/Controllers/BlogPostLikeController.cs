@@ -18,7 +18,7 @@ namespace Teachbook.Web.Controllers
         }
 
 
-        [HttpPost]
+        /*[HttpPost]
         [Route("Add")]
         public async Task<IActionResult> AddLike([FromBody] AddLikeRequest addLikeRequest)
         {
@@ -31,6 +31,23 @@ namespace Teachbook.Web.Controllers
             await blogPostLikeRepository.AddLikeForBlog(model);
 
             return Ok();
+        }*/
+
+        // Toggle Like (Add/Remove)
+        [HttpPost]
+        [Route("Toggle")]
+        public async Task<IActionResult> ToggleLike([FromBody] AddLikeRequest request)
+        {
+            if (request == null || request.BlogPostId == Guid.Empty || request.UserId == Guid.Empty)
+                return BadRequest("Invalid like request.");
+
+            var (liked, totalLikes) = await blogPostLikeRepository.ToggleLikeAsync(request.BlogPostId, request.UserId);
+
+            return Ok(new
+            {
+                liked,        // true = liked, false = unliked
+                totalLikes    // updated count
+            });
         }
 
         [HttpGet]
