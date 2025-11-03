@@ -2,8 +2,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Teachbook.Web.Data;
 using Teachbook.Web.Repositories;
+using StackExchange.Redis;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+// --- Redis connection ---
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var redisConnection = builder.Configuration.GetConnectionString("Redis");
+    var configuration = ConfigurationOptions.Parse(redisConnection, true);
+    configuration.AbortOnConnectFail = false; // optional safety
+    return ConnectionMultiplexer.Connect(configuration);
+});
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
