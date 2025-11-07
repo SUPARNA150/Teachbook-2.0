@@ -13,23 +13,27 @@ namespace Teachbook.Web.Controllers
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly UserManager<IdentityUser> userManager;
         private readonly IBlogPostCommentRepository blogPostCommentRepository;
+        private readonly IBlogPostSaveRepository blogPostSaveRepository;
 
         public BlogsController(IBlogPostRepository blogPostRepository,
             IBlogPostLikeRepository blogPostLikeRepository,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
-            IBlogPostCommentRepository blogPostCommentRepository)
+            IBlogPostCommentRepository blogPostCommentRepository,
+            IBlogPostSaveRepository blogPostSaveRepository)
         {
             this.blogPostRepository = blogPostRepository;
             this.blogPostLikeRepository = blogPostLikeRepository;
             this.signInManager = signInManager;
             this.userManager = userManager;
             this.blogPostCommentRepository = blogPostCommentRepository;
+            this.blogPostSaveRepository = blogPostSaveRepository;
         }
         [HttpGet]
         public async Task<IActionResult> Index(string urlHandle)
         {
             var liked = false;
+            var saved = false;
             var blogPost = await blogPostRepository.GetByUrlHandleAsync(urlHandle);
             var blogDetailsViewModel = new BlogDetailsViewModel();
 
@@ -48,6 +52,7 @@ namespace Teachbook.Web.Controllers
                     if (userId != null)
                     {
                         liked = await blogPostLikeRepository.HasUserLikedAsync(blogPost.Id, Guid.Parse(userId));
+                        saved = await blogPostSaveRepository.HasUserSavedAsync(blogPost.Id, Guid.Parse(userId));
                         //var likeFromUser = likesForBlog.FirstOrDefault(x => x.UserId == Guid.Parse(userId));
                         //liked = likeFromUser != null;
                     }
@@ -60,11 +65,13 @@ namespace Teachbook.Web.Controllers
 
                 foreach (var blogComment in blogCommentsDomainModel)
                 {
+                    var user = await userManager.FindByIdAsync(blogComment.UserId.ToString());
                     blogCommentsForView.Add(new BlogComment
                     {
                         Description = blogComment.Description,
                         DateAdded = blogComment.DateAdded,
-                        Username = (await userManager.FindByIdAsync(blogComment.UserId.ToString())).UserName
+                        //Username = (await userManager.FindByIdAsync(blogComment.UserId.ToString())).UserName
+                        Username = user?.UserName ?? "Unknown User"
                     });
                 }
 
@@ -83,6 +90,7 @@ namespace Teachbook.Web.Controllers
                     Tags = blogPost.Tags,
                     TotalLikes = totalLikes,
                     Liked = liked,
+                    Saved = saved,
                     Comments = blogCommentsForView
                 };
 
@@ -111,5 +119,27 @@ namespace Teachbook.Web.Controllers
 
             return View();
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Saved()
+        {
+            if (!signInManager.IsSignedIn(User))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var userId = userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Get all saved blogs for the logged-in user
+            var savedBlogs = await blogPostSaveRepository.GetSavedBlogsByUserAsync(Guid.Parse(userId));
+
+            return View(savedBlogs);
+        }
+
     }
 }

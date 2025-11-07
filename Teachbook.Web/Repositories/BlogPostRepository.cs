@@ -132,6 +132,7 @@ namespace Teachbook.Web.Repositories
                         .Include(x => x.Tags)
                         .Skip(skip)
                         .Take(take)
+                        .OrderByDescending(x => x.PublishedDate)
                         .ToListAsync();
         }
     }

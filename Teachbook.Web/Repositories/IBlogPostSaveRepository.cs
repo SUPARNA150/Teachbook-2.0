@@ -1,8 +1,11 @@
-﻿namespace Teachbook.Web.Repositories
+﻿using Teachbook.Web.Models.Domain;
+
+namespace Teachbook.Web.Repositories
 {
     public interface IBlogPostSaveRepository
     {
-        Task<(bool liked, int totalLikes)> ToggleSaveAsync(Guid blogPostId, Guid userId);
+        Task<bool> ToggleSaveAsync(Guid blogPostId, Guid userId);
         Task<bool> HasUserSavedAsync(Guid blogPostId, Guid userId);
+        Task<IEnumerable<BlogPost>> GetSavedBlogsByUserAsync(Guid userId);
     }
 }
